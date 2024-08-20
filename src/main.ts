@@ -1,23 +1,13 @@
-import { App, Stack, StackProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-
-export class MyStack extends Stack {
-  constructor(scope: Construct, id: string, props: StackProps = {}) {
-    super(scope, id, props);
-
-    // define resources here...
-  }
-}
-
-// for development, use account/region from cdk cli
-const devEnv = {
-  account: process.env.CDK_DEFAULT_ACCOUNT,
-  region: process.env.CDK_DEFAULT_REGION,
-};
+import { App } from 'aws-cdk-lib';
+import { BatchProcessor } from './BatchProcessor';
 
 const app = new App();
 
-new MyStack(app, 'batch-processor-dev', { env: devEnv });
-// new MyStack(app, 'batch-processor-prod', { env: prodEnv });
+new BatchProcessor(app, 'batch-processor', {
+  env: {
+    account: '071128183726',
+    region: 'us-east-1',
+  },
+});
 
 app.synth();

@@ -1,13 +1,18 @@
 import { awscdk } from 'projen';
 const project = new awscdk.AwsCdkTypeScriptApp({
-  cdkVersion: '2.1.0',
+  cdkVersion: '2.149.0',
   defaultReleaseBranch: 'main',
   name: 'batch-processor',
   projenrcTs: true,
-
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
+  deps: [
+    '@aws-sdk/client-cloudwatch',
+    '@aws-sdk/client-sqs',
+    '@aws-sdk/client-dynamodb',
+    '@aws-sdk/lib-dynamodb',
+    '@types/aws-lambda',
+    '@types/uuid',
+    'cdk-iam-floyd',
+    'uuid',
+  ],
 });
 project.synth();
