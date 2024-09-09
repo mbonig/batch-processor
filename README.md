@@ -4,6 +4,8 @@ This repository is an example of how you can handle batch processing in AWS Lamb
 
 Specifically, this tries to answer the question of how to know when a batch of items has been processed. This is a common problem when you have a large number of items to process and you want to know when all of them have been processed. 
 
+There is a blog [here](https://matthewbonig.com/posts/batching/) and a video [here](https://www.youtube.com/watch?v=JSKiEjio7Ds) that goes with this repo.
+
 # Spec
 
 A set large and variable set of items need to be processed. The items are processed using AWS Lambda Functions to process each item. We need to know when all the items have been processed.

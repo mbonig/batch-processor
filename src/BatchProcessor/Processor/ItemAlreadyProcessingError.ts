@@ -23,13 +23,13 @@ export async function writeProcessingState(item: Item) {
   try {
     await client.send(new PutCommand({
       TableName: process.env[TABLE_NAME_KEY]!,
-      ReturnValuesOnConditionCheckFailure: 'ALL_OLD', // return back the value so we can evaluate state and decide if reprocessing is needed or not
+      ReturnValuesOnConditionCheckFailure: 'ALL_OLD',
       Item: {
         pk: item.batchId,
         sk: item.itemId,
         status: 'processing',
       },
-      ConditionExpression: '#status <> :status', // don't need attribute_not_exists(pk)
+      ConditionExpression: '#status <> :status',
       ExpressionAttributeNames: {
         '#status': 'status',
       },
@@ -58,12 +58,9 @@ export async function writeFailedState(item: Item, err: Error) {
       failedReason: err.message,
     },
   }));
-
 }
 
 export async function writeFinishedState(item: Item) {
-
-  // need for idempotency of 1+ queue delivery
   await client.send(new PutCommand({
     TableName: process.env[TABLE_NAME_KEY]!,
     Item: {
