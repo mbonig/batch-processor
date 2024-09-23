@@ -1,11 +1,10 @@
-import type { SQSEvent } from 'aws-lambda';
+import { AttributeValue } from '@aws-sdk/client-dynamodb';
+import { unmarshall } from '@aws-sdk/util-dynamodb';
+import type { DynamoDBStreamEvent } from 'aws-lambda';
 import { writeMetric } from './CloudWatch';
-import {
-  ItemAlreadyProcessingError,
-  writeFailedState,
-  writeFinishedState,
-  writeProcessingState,
-} from './Processor/ItemAlreadyProcessingError';
+import { Item } from './Item';
+import { removeProcessingState } from './Processor/ItemAlreadyProcessingError';
+
 
 export const TABLE_NAME_KEY = 'TABLE_NAME';
 
@@ -16,41 +15,45 @@ function delay(ms: number) {
 }
 
 
-export const handler = async (event: SQSEvent) => {
+async function processItem(item: Item) {
+  console.info('Processing item:', item.itemId);
+  // simulating actual work
+  await delay(item.value);
+  await writeMetric('ItemProcessed', 1);
+}
+
+export const handler = async (event: DynamoDBStreamEvent | Item) => {
   console.log('event', JSON.stringify(event, null, 2));
   const batchItemFailures = [];
-  for (const record of event.Records) {
-    const batch = JSON.parse(record.body);
-    for (const item of batch) {
-      console.info('Processing item:', item.itemId);
-      try {
-        await writeProcessingState(item);
-        // going to temporarily recall this function to force the reprocessing state for testing
-        // await writeProcessingState(item);
+  if ('Records' in event) {
+    for (const record of event.Records) {
+      if (record.eventName !== 'INSERT') {
+        // we only care about inserts here.
+        continue;
+      }
+      const streamRecord = record.dynamodb?.NewImage!;
+      const unmarshalledRecord: any = unmarshall(streamRecord as { [key: string]: AttributeValue }) as Item;
+      const item = {
+        itemId: unmarshalledRecord.sk,
+        batchId: unmarshalledRecord.pk,
+        value: unmarshalledRecord.value,
+      };
 
+      if (!item) {
+        console.error('We did not get a new image for the record:', record);
+        continue;
+      }
+      try {
+        await processItem(item);
+        await removeProcessingState(item);
       } catch (err) {
-        if (err instanceof ItemAlreadyProcessingError) {
-          console.warn('Item already processing:', err);
-          await writeMetric('ItemAlreadyProcessing', 1);
-          continue;
-        }
+        batchItemFailures.push({ itemIdentifier: record.dynamodb?.SequenceNumber });
       }
-      try {
-        // simulating actual work
-        await delay(item.value);
-      } catch (err: any) {
-        console.error('Error processing item:', err);
-        // ok, so an error occurred during processing
-        await writeMetric('ItemFailedProcessing', 1);
-        // let's update the state to failed
-        await writeFailedState(item, err);
-        // let's also report this back so that proper failed message handling can be done
-        batchItemFailures.push({ itemIdentifier: record.messageId });
-      }
-
-      await writeFinishedState(item);
-      await writeMetric('ItemProcessed', 1);
     }
+    return { batchItemFailures };
+  } else {
+    console.error('Unknown incoming event: ', event);
+    throw new Error('Unknown incoming event');
   }
-  return { batchItemFailures };
+
 };

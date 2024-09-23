@@ -45,6 +45,7 @@
     "@aws-sdk/client-dynamodb": "^3.616.0",
     "@aws-sdk/client-sqs": "^3.616.0",
     "@aws-sdk/lib-dynamodb": "^3.616.0",
+    "@aws-sdk/util-dynamodb": "^3.656.0",
     "@types/aws-lambda": "^8.10.141",
     "@types/uuid": "^10.0.0",
     "aws-cdk-lib": "^2.149.0",

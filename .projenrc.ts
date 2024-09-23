@@ -9,6 +9,7 @@ const project = new awscdk.AwsCdkTypeScriptApp({
     '@aws-sdk/client-sqs',
     '@aws-sdk/client-dynamodb',
     '@aws-sdk/lib-dynamodb',
+    '@aws-sdk/util-dynamodb',
     '@types/aws-lambda',
     '@types/uuid',
     'cdk-iam-floyd',
