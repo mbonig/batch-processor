@@ -1,4 +1,5 @@
 import { ITableV2 } from 'aws-cdk-lib/aws-dynamodb';
+import { RecursiveLoop } from 'aws-cdk-lib/aws-lambda';
 import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
@@ -22,6 +23,7 @@ export class Finalizer extends Construct {
         [TABLE_NAME_KEY]: props.table.tableName,
         [QUEUE_URL_KEY]: props.queue.queueUrl,
       },
+      recursiveLoop: RecursiveLoop.ALLOW,
     });
     props.table.grantReadData(handler);
     props.queue.grantSendMessages(handler);

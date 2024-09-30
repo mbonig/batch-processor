@@ -1,11 +1,12 @@
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { AttributeType, ITableV2, StreamViewType, TableV2 } from 'aws-cdk-lib/aws-dynamodb';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Runtime, StartingPosition } from 'aws-cdk-lib/aws-lambda';
-import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import { POLLING_QUEUE_URL_KEY, PROCESSING_QUEUE_URL_KEY, TABLE_NAME_KEY } from './Processor.Resource';
 
 interface ProcessorProps {
   processingTime: Duration;
@@ -13,16 +14,22 @@ interface ProcessorProps {
 
 export class Processor extends Construct {
   public table: ITableV2;
-  public queue: IQueue;
+  public pollingQueue: IQueue;
+  processingQueue: IQueue;
 
   constructor(scope: Construct, id: string, props: ProcessorProps) {
     super(scope, id);
 
-    this.queue = new Queue(this, 'CheckForFinished', {
+    this.pollingQueue = new Queue(this, 'CheckForFinished', {
       encryption: QueueEncryption.KMS_MANAGED,
       enforceSSL: true,
       visibilityTimeout: props.processingTime,
-      deliveryDelay: Duration.minutes(5), // setting this here, but could and will set it on the message too
+    });
+
+    this.processingQueue = new Queue(this, 'ProcessingQueue', {
+      encryption: QueueEncryption.KMS_MANAGED,
+      enforceSSL: true,
+      visibilityTimeout: props.processingTime,
     });
 
     this.table = new TableV2(this, 'StateTable', {
@@ -41,15 +48,17 @@ export class Processor extends Construct {
 
     const handler = new NodejsFunction(this, 'Resource', {
       environment: {
-        TABLE_NAME: this.table.tableName,
-        QUEUE_URL: this.queue.queueUrl,
+        [TABLE_NAME_KEY]: this.table.tableName,
+        [POLLING_QUEUE_URL_KEY]: this.pollingQueue.queueUrl,
+        [PROCESSING_QUEUE_URL_KEY]: this.processingQueue.queueUrl,
       },
       runtime: Runtime.NODEJS_20_X,
       timeout: props.processingTime,
     });
 
     this.table.grantReadWriteData(handler);
-    this.queue.grantSendMessages(handler);
+    this.pollingQueue.grantSendMessages(handler);
+    this.processingQueue.grantSendMessages(handler);
 
     handler.addToRolePolicy(new PolicyStatement({
       actions: ['cloudwatch:PutMetricData'],
@@ -57,10 +66,11 @@ export class Processor extends Construct {
       effect: Effect.ALLOW,
     }));
 
-    handler.addEventSource(new DynamoEventSource(this.table, {
-      startingPosition: StartingPosition.LATEST,
+    handler.addEventSource(new SqsEventSource(this.processingQueue, {
       reportBatchItemFailures: true,
+      batchSize: 10,
     }));
+
   }
 
 }

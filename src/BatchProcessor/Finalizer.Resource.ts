@@ -27,17 +27,17 @@ export const handler = async (event: SQSEvent) => {
 
     if (item.Count === 0) {
       // if no records exist, the batch is complete
-      // do something with the batch
       console.info('The batch is complete!');
+      // do something with the batch
     } else {
-      console.info('The batch is not complete, waiting 5 minutes and then will check again');
       // if one record exists, the batch is not complete
+      console.info('The batch is not complete, waiting 5 minutes and then will check again');
 
       // put another message on the queue having it checked again in 5 minutes
       await sqsClient.send(new SendMessageCommand({
         QueueUrl: process.env[QUEUE_URL_KEY]!,
         MessageBody: record.body,
-        DelaySeconds: 1 * 60, // 5 minutes
+        DelaySeconds: 5 * 60, // 5 minutes
       }));
     }
   }
