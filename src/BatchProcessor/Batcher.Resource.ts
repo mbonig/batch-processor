@@ -31,6 +31,7 @@ export const handler = async (event: any) => {
       MessageBody: JSON.stringify(batch),
     }));
     for (const item of batch) {
+      console.info('Writing item to the table: ', item);
       await ddbClient.send(new PutCommand({
         TableName: process.env[TABLE_NAME_KEY]!,
         Item: {
