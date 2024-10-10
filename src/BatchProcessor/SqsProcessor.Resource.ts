@@ -19,14 +19,6 @@ function delay(ms: number) {
   });
 }
 
-
-async function processItem(item: Item) {
-  console.info('Processing item:', item.itemId);
-  // simulating actual work
-  await delay(item.value);
-  await writeMetric('ItemProcessed', 1);
-}
-
 export const handler = async (event: SQSEvent | Batch) => {
   console.log('event', JSON.stringify(event, null, 2));
   const batchItemFailures = [];
@@ -64,16 +56,6 @@ export const handler = async (event: SQSEvent | Batch) => {
       }
     }
     return { batchItemFailures };
-  } else if ('Items' in event) {
-    for (const item of event.Items) {
-      try {
-        await processItem(item);
-      } catch (err) {
-        console.error('Error processing item:', item);
-      }
-    }
-    return event.Items;
-
   }
 
   return {};

@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DeleteCommand, DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Item } from '../Item';
-import { TABLE_NAME_KEY } from '../Processor.Resource';
+import { TABLE_NAME_KEY } from '../SqsProcessor.Resource';
 
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));

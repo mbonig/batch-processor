@@ -2138,6 +2138,16 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@matthewbonig/state-machine@^0.0.35":
+  version "0.0.35"
+  resolved "https://registry.yarnpkg.com/@matthewbonig/state-machine/-/state-machine-0.0.35.tgz#eecf31eed11ca2b82db9ba451756b0bdf9628b39"
+  integrity sha512-JO78EKE+JwsXTU0qCZBk9lFvlH5g/1ni/56uQrLczA0RxUPwcEDybxBaejuUYqVCZNjycMrHEJ96dfz9A59UDw==
+  dependencies:
+    case "^1.6.3"
+    js-yaml "^4.1.0"
+    lodash.merge "^4.6.2"
+    projen "^0.71.34"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -5878,6 +5888,25 @@ pretty-format@^29.0.0, pretty-format@^29.7.0:
     "@jest/schemas" "^29.6.3"
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
+
+projen@^0.71.34:
+  version "0.71.163"
+  resolved "https://registry.yarnpkg.com/projen/-/projen-0.71.163.tgz#8522901b1b6f791567050fa43bc7248a86f0699d"
+  integrity sha512-Sj0UthyhhvHYAhgvuQtQk6R4ia/AkHGT/JG3PFbEjIIYcPSImonW+1OIrZ+S+ofWZJPWZj07RBYLiZ+qAVm8NQ==
+  dependencies:
+    "@iarna/toml" "^2.2.5"
+    case "^1.6.3"
+    chalk "^4.1.2"
+    comment-json "4.2.2"
+    conventional-changelog-config-spec "^2.1.0"
+    fast-json-patch "^3.1.1"
+    glob "^8"
+    ini "^2.0.0"
+    semver "^7.5.4"
+    shx "^0.3.4"
+    xmlbuilder2 "^3.1.1"
+    yaml "^2.2.2"
+    yargs "^17.7.2"
 
 projen@^0.84.6:
   version "0.84.6"

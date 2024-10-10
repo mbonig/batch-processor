@@ -91,6 +91,10 @@
       "type": "runtime"
     },
     {
+      "name": "@matthewbonig/state-machine",
+      "type": "runtime"
+    },
+    {
       "name": "@types/aws-lambda",
       "type": "runtime"
     },

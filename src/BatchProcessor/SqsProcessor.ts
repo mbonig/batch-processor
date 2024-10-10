@@ -6,13 +6,13 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { POLLING_QUEUE_URL_KEY, PROCESSING_QUEUE_URL_KEY, TABLE_NAME_KEY } from './Processor.Resource';
+import { POLLING_QUEUE_URL_KEY, PROCESSING_QUEUE_URL_KEY, TABLE_NAME_KEY } from './SqsProcessor.Resource';
 
 interface ProcessorProps {
   processingTime: Duration;
 }
 
-export class Processor extends Construct {
+export class SqsProcessor extends Construct {
   public table: ITableV2;
   public pollingQueue: IQueue;
   processingQueue: IQueue;
