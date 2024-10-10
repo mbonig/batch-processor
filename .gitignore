@@ -49,4 +49,5 @@ junit.xml
 /cdk.out/
 .cdk.staging/
 .parcel-cache/
+!/src/BatchProcessor/SfnProcessor/batch-processor-statemachine.ts
 !/.projenrc.ts

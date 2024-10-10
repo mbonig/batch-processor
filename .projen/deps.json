@@ -21,7 +21,7 @@
     },
     {
       "name": "aws-cdk",
-      "version": "^2.149.0",
+      "version": "^2.159.1",
       "type": "build"
     },
     {
@@ -75,11 +75,23 @@
       "type": "runtime"
     },
     {
+      "name": "@aws-sdk/client-s3",
+      "type": "runtime"
+    },
+    {
       "name": "@aws-sdk/client-sqs",
       "type": "runtime"
     },
     {
       "name": "@aws-sdk/lib-dynamodb",
+      "type": "runtime"
+    },
+    {
+      "name": "@aws-sdk/util-dynamodb",
+      "type": "runtime"
+    },
+    {
+      "name": "@matthewbonig/state-machine",
       "type": "runtime"
     },
     {
@@ -92,7 +104,7 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.149.0",
+      "version": "^2.159.1",
       "type": "runtime"
     },
     {

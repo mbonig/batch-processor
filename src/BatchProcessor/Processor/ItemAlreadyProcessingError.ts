@@ -1,7 +1,8 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { DeleteCommand, DynamoDBDocumentClient, PutCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Item } from '../Item';
-import { TABLE_NAME_KEY } from '../Processor.Resource';
+import { TABLE_NAME_KEY } from '../SqsProcessor.Resource';
+
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 export const REMAINING_FIELD_NAME = 'remaining';
@@ -79,13 +80,22 @@ export async function writeFinishedState(item: Item) {
       pk: item.batchId,
       sk: 'status',
     },
-    UpdateExpression: 'SET #remaining = if_not_exists(#remaining, :base) + :increment',
+    UpdateExpression: 'ADD #remaining :increment',
     ExpressionAttributeNames: {
       '#remaining': REMAINING_FIELD_NAME,
     },
     ExpressionAttributeValues: {
       ':increment': -1,
-      ':base': 0,
+    },
+  }));
+}
+
+export async function removeProcessingState(item: Item) {
+  await client.send(new DeleteCommand({
+    TableName: process.env[TABLE_NAME_KEY]!,
+    Key: {
+      pk: item.batchId,
+      sk: item.itemId,
     },
   }));
 }

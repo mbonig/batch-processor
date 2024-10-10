@@ -1,11 +1,12 @@
-const { CloudWatchClient, PutMetricDataCommand } = require('@aws-sdk/client-cloudwatch');
+import { CloudWatchClient, PutMetricDataCommand, PutMetricDataCommandInput } from '@aws-sdk/client-cloudwatch';
+
 
 // Create a CloudWatch client
 const client = new CloudWatchClient({});
 
 export const writeMetric = (metricName: string, value: number) => {
   // Define your custom metric data
-  const metricData = {
+  const metricData: PutMetricDataCommandInput = {
     MetricData: [
       {
         MetricName: metricName, // Name of the metric
