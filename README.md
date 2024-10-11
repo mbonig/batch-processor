@@ -10,9 +10,15 @@ There is a blog [here](https://matthewbonig.com/posts/batching/) and a video [he
 
 A set large and variable set of items need to be processed. The items are processed using AWS Lambda Functions to process each item. We need to know when all the items have been processed.
 
-# Solution
+# SQS Solution
 
-AWS Lambda Functions will be used to process each time. Additionally, a number of other AWS services will be used to manage the batch processing. This includes SQS, DynamoDB, and EventBridge.
+AWS Lambda Functions will be used to process each time. Additionally, a number of other AWS services will be used to manage the batch processing. This includes SQS, DynamoDB, and EventBridge. 
+This can be found in the SqsBatchProcessing stack.
+
+# Step Functions Solution
+
+This follows Yan's approach and uses Step Functions to manage the batch processing. 
+This can be found in the SfnBatchProcessing stack.
 
 # Considerations
 
@@ -22,7 +28,7 @@ In order from most to least important:
 2. Simplicity - The solution should be easy to understand and maintain. This includes the code, the architecture, and the deployment process.
 3. Scalability - The solution should work well regardless if it's 100 items or 100 million items.
 
-# Architecture
+# SQS Architecture
 
 Let's start with some basic definitions:
 
@@ -35,7 +41,8 @@ Let's start with some basic definitions:
 The architecture is as follows:
 
 1. An EventBridge rule with cron schedule (4x a day) triggers the batcher.
-2. The batcher creates a set number of items to be processed. Each item will have a unique ID and a random 'value' between 0 and 1000. It will write messages to an SQS queue. Each message may contain more than one item to be processed. This will act as a tuning parameter to minimize runtime and costs during optimization routines. It will also write a record to the 
-3. The SQS queue is an event source on the processor. The processor will iterate over all items in the message and process each one individually. The processor will write a record to the DynamoDB table when it has begun processing an item and then update the record when it has finished processing the item. Additionally, it will increment and decrement a record which acts as a [counting semaphore] (https://en.wikipedia.org/wiki/Semaphore_(programming)) in DynamoDB.
-4. The counting semaphore is checked for a 0 value. If it is 0, then all items have been processed and the finalizer is triggered. The finalizer will send a notification to an SNS topic.
+2. The batcher creates a set number of items to be processed. Each item will have a unique ID and a random 'value' between 0 and 1000. It will write messages to an SQS queue. Each message may contain more than one item to be processed. This will act as a tuning parameter to minimize runtime and costs during optimization routines. It also writes itemState records to DynamoDB.
+3. The SQS queue is an event source on the processor. The processor will iterate over all items in the message and process each one individually. The processor then removes the itemState record from the DynamoDB table.
+4. The finalizer runs a query against the DynamoDB table for the given batch to see if there are any records left. 
+5. If there are no records left, the batch is considered complete.
 

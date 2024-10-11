@@ -211,13 +211,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/jest,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-sdk/client-cloudwatch,@aws-sdk/client-dynamodb,@aws-sdk/client-sqs,@aws-sdk/lib-dynamodb,@types/aws-lambda,@types/uuid,cdk-iam-floyd,uuid"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@types/jest,esbuild,eslint-import-resolver-typescript,eslint-plugin-import,jest,projen,ts-jest,ts-node,typescript,@aws-sdk/client-cloudwatch,@aws-sdk/client-dynamodb,@aws-sdk/client-s3,@aws-sdk/client-sqs,@aws-sdk/lib-dynamodb,@aws-sdk/util-dynamodb,@matthewbonig/state-machine,@types/aws-lambda,@types/uuid,cdk-iam-floyd,uuid"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest ts-node typescript @aws-sdk/client-cloudwatch @aws-sdk/client-dynamodb @aws-sdk/client-sqs @aws-sdk/lib-dynamodb @types/aws-lambda @types/uuid aws-cdk-lib cdk-iam-floyd constructs uuid"
+          "exec": "yarn upgrade @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk esbuild eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit projen ts-jest ts-node typescript @aws-sdk/client-cloudwatch @aws-sdk/client-dynamodb @aws-sdk/client-s3 @aws-sdk/client-sqs @aws-sdk/lib-dynamodb @aws-sdk/util-dynamodb @matthewbonig/state-machine @types/aws-lambda @types/uuid aws-cdk-lib cdk-iam-floyd constructs uuid"
         },
         {
           "exec": "npx projen"
